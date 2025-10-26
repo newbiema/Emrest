@@ -1,6 +1,8 @@
 <?php
 require_once __DIR__ . '/../services/Auth.php';
 require_once __DIR__ . '/../services/Database.php';
+require_once __DIR__ . '/../services/Alert.php';
+
 
 $auth = new Auth();
 $auth->checkLogin();
@@ -22,13 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
   $query = "INSERT INTO pasien (pasien_id, pasien_nama, tanggal_lahir, alamat, jenis_kelamin, umur, nama_kk, berat, tinggi, tanggal_daftar, telp)
             VALUES ('$id','$nama','$tanggal','$alamat','$jk','$umur','$kk','$berat','$tinggi','$tgl_daftar','$telp')";
-  if (mysqli_query($db, $query)) {
-    echo "<script>
-      Swal.fire({icon:'success',title:'Berhasil!',text:'Data pasien berhasil ditambahkan.',confirmButtonColor:'#2563eb'})
-      .then(()=>window.location.href='data_pasien.php');
-    </script>";
-    exit;
-  }
+    if (mysqli_query($db, $query)) {
+    Alert::toast('success', 'Data pasien berhasil ditambahkan.', 'data_pasien.php');
+    } else {
+    Alert::toast('error', 'Terjadi kesalahan saat menambah data.', 'data_pasien.php');
+    }
+
+
 }
 
 ob_start();

@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../services/Auth.php';
 require_once __DIR__ . '/../services/Database.php';
+require_once __DIR__ . '/../services/Alert.php';
 
 $auth = new Auth();
 $auth->checkLogin();
@@ -47,17 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     jenis_kelamin='$jk', umur='$umur', nama_kk='$kk', berat='$berat', tinggi='$tinggi', 
     tanggal_daftar='$tgl_daftar', telp='$telp' WHERE inc='$id'";
 
-  if (mysqli_query($db, $query)) {
-    echo "<script>
-      Swal.fire({
-        icon:'success',
-        title:'Berhasil!',
-        text:'Data pasien berhasil diperbarui.',
-        confirmButtonColor:'#2563eb'
-      }).then(()=>window.location.href='data_pasien.php');
-    </script>";
-    exit;
-  }
+    if (mysqli_query($db, $query)) {
+    Alert::toast('success', 'Data pasien berhasil diperbarui.', 'data_pasien.php');
+    } else {
+    Alert::toast('error', 'Terjadi kesalahan saat memperbarui data.', 'data_pasien.php');
+    }
+
 }
 
 ob_start();

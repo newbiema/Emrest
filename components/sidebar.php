@@ -20,10 +20,10 @@ function isActive($page, $currentPage) {
   </div>
 
   <nav class="flex-1 p-4 space-y-2">
-    <a href="/index.php" class="flex items-center p-2 rounded-lg <?= isActive('index.php', $currentPage) ?> transition">
+    <a href="#" class="flex items-center p-2 rounded-lg <?= isActive('index.php', $currentPage) ?> transition">
       <i class="fa-solid fa-gauge mr-3"></i> Dashboard
     </a>
-    <a href="../patients/data_pasien.php" class="flex items-center p-2 rounded-lg <?= isActive('data_pasien.php', $currentPage) ?> transition">
+    <a href="/patients/data_pasien.php" class="flex items-center p-2 rounded-lg <?= isActive('data_pasien.php', $currentPage) ?> transition">
       <i class="fa-solid fa-users mr-3"></i> Data Pasien
     </a>
     <a href="/data_dokter.php" class="flex items-center p-2 rounded-lg <?= isActive('data_dokter.php', $currentPage) ?> transition">
