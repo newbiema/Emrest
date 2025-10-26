@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../services/Auth.php';
 require_once __DIR__ . '/../services/Database.php';
+require_once __DIR__ . '/../services/Helper.php'; // penting!
 
 $auth = new Auth();
 $auth->checkLogin();
@@ -16,7 +17,7 @@ ob_start();
   <h1 class="text-3xl font-bold text-gray-800">
     <i class="fa-solid fa-users text-blue-600 mr-2"></i>Data Pasien
   </h1>
-  <a href="tambah_pasien.php" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+  <a href="<?= Helper::baseUrl('patients/tambah_pasien.php') ?>" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
     <i class="fa-solid fa-plus"></i> Tambah Pasien
   </a>
 </div>
@@ -45,8 +46,8 @@ ob_start();
         <td class="px-4 py-3"><?= htmlspecialchars($row['jenis_kelamin']); ?></td>
         <td class="px-4 py-3 text-center"><?= htmlspecialchars($row['umur']); ?></td>
         <td class="px-4 py-3"><?= htmlspecialchars($row['nama_kk']); ?></td>
-        <td class="px-4 py-3 text-center space-x-2">
-          <a href="edit_pasien.php?id=<?= $row['inc']; ?>" class="text-blue-600 hover:text-blue-800">
+        <td class="px-4 py-3 text-center space-x-3">
+          <a href="<?= Helper::baseUrl('patients/edit_pasien.php?id=' . $row['inc']) ?>" class="text-blue-600 hover:text-blue-800">
             <i class="fa-solid fa-pen-to-square"></i>
           </a>
           <button onclick="hapusPasien(<?= $row['inc']; ?>)" class="text-red-600 hover:text-red-800">
@@ -59,6 +60,8 @@ ob_start();
   </table>
 </div>
 
+<!-- SweetAlert untuk hapus -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 function hapusPasien(id) {
   Swal.fire({
@@ -71,11 +74,12 @@ function hapusPasien(id) {
     confirmButtonText: 'Ya, hapus!'
   }).then((result) => {
     if (result.isConfirmed) {
-      window.location.href = 'hapus_pasien.php?id=' + id;
+      window.location.href = '<?= Helper::baseUrl("patients/hapus_pasien.php?id=") ?>' + id;
     }
   });
 }
 </script>
+
 <?php
 $contentFile = tempnam(sys_get_temp_dir(), 'content');
 file_put_contents($contentFile, ob_get_clean());
