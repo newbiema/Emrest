@@ -44,13 +44,13 @@ ob_start();
     <a href="export_pdf.php" target="_blank"
       class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
       <i class="fa-solid fa-file-pdf"></i>
-      <span>PDF</span>
+      <span>Export PDF</span>
     </a>
 
     <a href="export_excel.php" target="_blank"
       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
       <i class="fa-solid fa-file-excel"></i>
-      <span>Excel</span>
+      <span>Export Excel</span>
     </a>
   </div>
 </div>

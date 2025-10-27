@@ -95,6 +95,34 @@ ob_start();
   </p>
 </div>
 
+<!-- Fitur Sistem -->
+<div class="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+  <div class="bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-xl p-6 transition">
+    <i class="fa-solid fa-users text-3xl text-blue-600 mb-3"></i>
+    <h3 class="font-semibold text-gray-800 mb-1">Manajemen Pasien</h3>
+    <p class="text-sm text-gray-500">Kelola data pasien secara lengkap dan terstruktur.</p>
+  </div>
+
+  <div class="bg-green-50 hover:bg-green-100 border border-green-200 rounded-xl p-6 transition">
+    <i class="fa-solid fa-user-doctor text-3xl text-green-600 mb-3"></i>
+    <h3 class="font-semibold text-gray-800 mb-1">Data Dokter</h3>
+    <p class="text-sm text-gray-500">Catat informasi dan spesialisasi dokter dengan mudah.</p>
+  </div>
+
+  <div class="bg-yellow-50 hover:bg-yellow-100 border border-yellow-200 rounded-xl p-6 transition">
+    <i class="fa-solid fa-capsules text-3xl text-yellow-500 mb-3"></i>
+    <h3 class="font-semibold text-gray-800 mb-1">Data Obat</h3>
+    <p class="text-sm text-gray-500">Kelola stok dan jenis obat yang tersedia di rumah sakit.</p>
+  </div>
+
+  <div class="bg-red-50 hover:bg-red-100 border border-red-200 rounded-xl p-6 transition">
+    <i class="fa-solid fa-file-medical text-3xl text-red-600 mb-3"></i>
+    <h3 class="font-semibold text-gray-800 mb-1">Rekam Medis</h3>
+    <p class="text-sm text-gray-500">Pantau dan cetak riwayat pemeriksaan setiap pasien.</p>
+  </div>
+</div>
+
+
 <?php
 // Simpan konten ke file sementara
 $contentFile = tempnam(sys_get_temp_dir(), 'content');
