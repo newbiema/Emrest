@@ -11,6 +11,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 $auth = new Auth();
 $auth->checkLogin();
+$auth->authorize(['admin','dokter']);
 
 $db = (new Database())->connect();
 

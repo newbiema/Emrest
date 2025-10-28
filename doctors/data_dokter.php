@@ -5,21 +5,24 @@ require_once __DIR__ . '/../services/Helper.php';
 
 $auth = new Auth();
 $auth->checkLogin();
+$auth->authorize(['admin','dokter']); // list dokter boleh admin & dokter
 
 $db = (new Database())->connect();
-$keyword = $_GET['search'] ?? '';
 
-if ($keyword) {
+// Search (escape biar aman)
+$keyword = isset($_GET['search']) ? trim($_GET['search']) : '';
+if ($keyword !== '') {
+  $kw  = mysqli_real_escape_string($db, $keyword);
   $sql = "SELECT * FROM dokter 
-          WHERE dokter_id LIKE '%$keyword%' 
-             OR dokter_nama LIKE '%$keyword%' 
-             OR spesialis LIKE '%$keyword%' 
+          WHERE dokter_id   LIKE '%$kw%' 
+             OR dokter_nama LIKE '%$kw%' 
+             OR spesialis   LIKE '%$kw%' 
           ORDER BY id DESC";
 } else {
   $sql = "SELECT * FROM dokter ORDER BY id DESC";
 }
 
-$result = mysqli_query($db, $sql);
+$result    = mysqli_query($db, $sql);
 $pageTitle = "Data Dokter";
 
 ob_start();
@@ -31,17 +34,23 @@ ob_start();
   </h1>
 
   <div class="flex gap-2">
+    <!-- tambah: admin only -->
     <a href="<?= Helper::baseUrl('doctors/tambah_dokter.php') ?>" 
+       data-role="doctor.add"
        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
       <i class="fa-solid fa-plus"></i> Tambah
     </a>
-    <a href="export_pdf.php" target="_blank" 
+
+    <!-- export: admin & dokter -->
+    <a href="export_pdf.php" target="_blank"
+       data-role="doctor.export"
        class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-      <i class="fa-solid fa-file-pdf"></i>Export PDF
+      <i class="fa-solid fa-file-pdf"></i> Export PDF
     </a>
-    <a href="export_excel.php" target="_blank" 
+    <a href="export_excel.php" target="_blank"
+       data-role="doctor.export"
        class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-      <i class="fa-solid fa-file-excel"></i>Export Excel
+      <i class="fa-solid fa-file-excel"></i> Export Excel
     </a>
   </div>
 </div>
@@ -87,30 +96,32 @@ ob_start();
             Tidak ada data dokter ditemukan.
           </td>
         </tr>
-      <?php else: ?>
-        <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-          <tr class="border-b hover:bg-gray-50 transition">
-            <td class="px-4 py-3"><?= htmlspecialchars($row['dokter_id']); ?></td>
-            <td class="px-4 py-3 font-medium"><?= htmlspecialchars($row['dokter_nama']); ?></td>
-            <td class="px-4 py-3"><?= htmlspecialchars($row['spesialis']); ?></td>
-            <td class="px-4 py-3"><?= htmlspecialchars($row['jenis_kelamin']); ?></td>
-            <td class="px-4 py-3"><?= htmlspecialchars($row['tanggal_lahir']); ?></td>
-            <td class="px-4 py-3"><?= htmlspecialchars($row['alamat']); ?></td>
-            <td class="px-4 py-3 text-center"><?= htmlspecialchars($row['umur']); ?></td>
-            <td class="px-4 py-3"><?= htmlspecialchars($row['no_telp']); ?></td>
-            <td class="px-4 py-3 text-center space-x-2">
-              <a href="<?= Helper::baseUrl('doctors/edit_dokter.php?id=' . $row['id']) ?>" 
-                 class="text-blue-600 hover:text-blue-800">
-                <i class="fa-solid fa-pen-to-square"></i>
-              </a>
-              <button onclick="hapusDokter(<?= $row['id']; ?>)" 
-                      class="text-red-600 hover:text-red-800">
-                <i class="fa-solid fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        <?php } ?>
-      <?php endif; ?>
+      <?php else: while ($row = mysqli_fetch_assoc($result)) { ?>
+        <tr class="border-b hover:bg-gray-50 transition">
+          <td class="px-4 py-3"><?= htmlspecialchars($row['dokter_id']); ?></td>
+          <td class="px-4 py-3 font-medium"><?= htmlspecialchars($row['dokter_nama']); ?></td>
+          <td class="px-4 py-3"><?= htmlspecialchars($row['spesialis']); ?></td>
+          <td class="px-4 py-3"><?= htmlspecialchars($row['jenis_kelamin']); ?></td>
+          <td class="px-4 py-3"><?= htmlspecialchars($row['tanggal_lahir']); ?></td>
+          <td class="px-4 py-3"><?= htmlspecialchars($row['alamat']); ?></td>
+          <td class="px-4 py-3 text-center"><?= htmlspecialchars($row['umur']); ?></td>
+          <td class="px-4 py-3"><?= htmlspecialchars($row['no_telp']); ?></td>
+          <td class="px-4 py-3 text-center space-x-2">
+            <!-- edit: admin only -->
+            <a href="<?= Helper::baseUrl('doctors/edit_dokter.php?id=' . $row['id']) ?>" 
+               data-role="doctor.edit"
+               class="text-blue-600 hover:text-blue-800">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </a>
+            <!-- delete: admin only -->
+            <button onclick="hapusDokter(<?= (int)$row['id']; ?>)" 
+                    data-role="doctor.delete"
+                    class="text-red-600 hover:text-red-800">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+      <?php } endif; ?>
     </tbody>
   </table>
 </div>
@@ -126,10 +137,11 @@ function hapusDokter(id) {
     showCancelButton: true,
     confirmButtonColor: '#2563eb',
     cancelButtonColor: '#d33',
-    confirmButtonText: 'Ya, hapus!'
+    confirmButtonText: 'Ya, hapus!',
+    cancelButtonText: 'Batal'
   }).then((result) => {
     if (result.isConfirmed) {
-      window.location.href = 'hapus_dokter.php?id=' + id;
+      window.location.href = '<?= Helper::baseUrl("doctors/hapus_dokter.php?id=") ?>' + id;
     }
   });
 }

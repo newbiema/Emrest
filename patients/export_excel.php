@@ -10,6 +10,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 
 $auth = new Auth();
 $auth->checkLogin();
+$auth->authorize(['admin','perawat','loket','dokter']);
 
 $db = (new Database())->connect();
 

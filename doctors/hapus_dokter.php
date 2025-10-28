@@ -2,7 +2,9 @@
 require_once __DIR__ . '/../services/Database.php';
 require_once __DIR__ . '/../services/Helper.php';
 require_once __DIR__ . '/../services/Alert.php';
+require_once __DIR__ . '/../services/Auth.php';
 
+$auth->authorize(['admin']);
 $db = (new Database())->connect();
 $id = $_GET['id'] ?? null;
 

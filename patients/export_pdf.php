@@ -9,6 +9,7 @@ use Dompdf\Options;
 
 $auth = new Auth();
 $auth->checkLogin();
+$auth->authorize(['admin','perawat','loket','dokter']);
 
 $db = (new Database())->connect();
 $result = mysqli_query($db, "SELECT * FROM pasien ORDER BY pasien_nama ASC");

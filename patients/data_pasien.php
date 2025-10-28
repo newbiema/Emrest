@@ -5,22 +5,25 @@ require_once __DIR__ . '/../services/Helper.php';
 
 $auth = new Auth();
 $auth->checkLogin();
+// hak akses lihat pasien
+$auth->authorize(['admin','perawat','loket','dokter','apotek']);
 
 $db = (new Database())->connect();
 
+// --- Search (NOTE: untuk keamanan idealnya pakai prepared statement) ---
 $keyword = isset($_GET['search']) ? trim($_GET['search']) : '';
-
-if ($keyword) {
+if ($keyword !== '') {
+  $kw = mysqli_real_escape_string($db, $keyword);
   $sql = "SELECT * FROM pasien 
-          WHERE pasien_id LIKE '%$keyword%' 
-             OR pasien_nama LIKE '%$keyword%' 
-             OR nama_kk LIKE '%$keyword%'
+          WHERE pasien_id   LIKE '%$kw%' 
+             OR pasien_nama LIKE '%$kw%' 
+             OR nama_kk     LIKE '%$kw%'
           ORDER BY inc DESC";
 } else {
   $sql = "SELECT * FROM pasien ORDER BY inc DESC";
 }
-
 $result = mysqli_query($db, $sql);
+
 $pageTitle = "Data Pasien";
 
 ob_start();
@@ -35,26 +38,30 @@ ob_start();
   </div>
 
   <div class="flex flex-wrap items-center gap-2">
+    <!-- tombol tambah: muncul hanya jika role punya 'patient.add' -->
     <a href="<?= Helper::baseUrl('patients/tambah_pasien.php') ?>"
-      class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+       data-role="patient.add"
+       class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
       <i class="fa-solid fa-plus"></i>
       <span>Tambah</span>
     </a>
 
+    <!-- export: butuh 'patient.export' -->
     <a href="export_pdf.php" target="_blank"
-      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+       data-role="patient.export"
+       class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
       <i class="fa-solid fa-file-pdf"></i>
       <span>Export PDF</span>
     </a>
 
     <a href="export_excel.php" target="_blank"
-      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
+       data-role="patient.export"
+       class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition">
       <i class="fa-solid fa-file-excel"></i>
       <span>Export Excel</span>
     </a>
   </div>
 </div>
-
 
 <form method="GET" class="mb-6 flex flex-wrap items-center gap-2">
   <div class="relative">
@@ -78,7 +85,6 @@ ob_start();
     </a>
   <?php endif; ?>
 </form>
-
 
 <!-- Tabel Data -->
 <div class="bg-white shadow-lg rounded-xl overflow-hidden">
@@ -114,11 +120,17 @@ ob_start();
             <td class="px-4 py-3 text-center"><?= htmlspecialchars($row['umur']); ?></td>
             <td class="px-4 py-3"><?= htmlspecialchars($row['nama_kk']); ?></td>
             <td class="px-4 py-3 text-center space-x-3">
-              <a href="<?= Helper::baseUrl('patients/edit_pasien.php?id=' . $row['inc']) ?>" 
+              <!-- edit: butuh 'patient.edit' -->
+              <a href="<?= Helper::baseUrl('patients/edit_pasien.php?id=' . $row['inc']) ?>"
+                 data-role="patient.edit"
                  class="text-blue-600 hover:text-blue-800">
                 <i class="fa-solid fa-pen-to-square"></i>
               </a>
-              <button onclick="hapusPasien(<?= $row['inc']; ?>)" 
+
+              <!-- delete: butuh 'patient.delete' -->
+              <button type="button"
+                      data-role="patient.delete"
+                      onclick="hapusPasien(<?= (int)$row['inc']; ?>)"
                       class="text-red-600 hover:text-red-800">
                 <i class="fa-solid fa-trash"></i>
               </button>
@@ -141,7 +153,8 @@ function hapusPasien(id) {
     showCancelButton: true,
     confirmButtonColor: '#2563eb',
     cancelButtonColor: '#d33',
-    confirmButtonText: 'Ya, hapus!'
+    confirmButtonText: 'Ya, hapus!',
+    cancelButtonText: 'Batal'
   }).then((result) => {
     if (result.isConfirmed) {
       window.location.href = '<?= Helper::baseUrl("patients/hapus_pasien.php?id=") ?>' + id;

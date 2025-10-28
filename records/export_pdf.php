@@ -8,7 +8,7 @@ use Dompdf\Options;
 
 $auth = new Auth();
 $auth->checkLogin();
-
+$auth->authorize(['admin','dokter']);
 $db = (new Database())->connect();
 
 // Query sama seperti di data_rekam.php
