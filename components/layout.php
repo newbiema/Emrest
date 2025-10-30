@@ -17,7 +17,7 @@ $pageTitle = $pageTitle ?? 'Rekam Medis';
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><?= htmlspecialchars($pageTitle) ?> | RS Emrest</title>
+  <title><?= htmlspecialchars($pageTitle) ?> | Xmo</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -33,7 +33,7 @@ $pageTitle = $pageTitle ?? 'Rekam Medis';
   <aside class="sidebar w-64 text-white flex flex-col">
     <div class="p-6 border-b border-blue-500 text-center">
       <h2 class="text-2xl font-bold mb-1 flex justify-center items-center gap-2">
-        <i class="fa-solid fa-hospital"></i> RS Emrest
+        <i class="fa-solid fa-hospital"></i> Xmo
       </h2>
       <p class="text-xs text-blue-100"><?= htmlspecialchars($user) ?> (<?= htmlspecialchars($role) ?>)</p>
     </div>
@@ -86,6 +86,15 @@ $pageTitle = $pageTitle ?? 'Rekam Medis';
         <i class="fa-solid fa-users-gear w-5"></i> Manajemen User
       </a>
       <?php endif; ?>
+
+
+        <!-- Konsultasi Layanan -->
+      <?php if (in_array ($role , ['admin','dokter','perawat'])): ?>
+      <a href="http://emrest.ct.ws" target="_blank"
+         class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-700">
+        <i class="fa-solid fa-hospital  w-5"></i> Konsultasi Layanan
+      </a>
+      <?php endif; ?>
     </nav>
 
     <!-- Tombol Logout -->
@@ -96,6 +105,7 @@ $pageTitle = $pageTitle ?? 'Rekam Medis';
       </a>
     </div>
   </aside>
+  
 
   <!-- Konten Utama -->
   <main class="flex-1 overflow-y-auto p-8">

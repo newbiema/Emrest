@@ -31,7 +31,7 @@ function navActive($needle,$cur){ return str_contains($cur,$needle) ? 'text-blue
       <!-- Brand -->
       <a href="<?= Helper::baseUrl('portal/index.php') ?>" class="flex items-center gap-2 text-blue-700">
         <i class="fa-solid fa-heart-pulse text-2xl"></i>
-        <span class="font-semibold text-lg">RS EMREST</span>
+        <span class="font-semibold text-lg">Xmo</span>
       </a>
 
       <!-- Desktop nav -->
@@ -121,7 +121,7 @@ function navActive($needle,$cur){ return str_contains($cur,$needle) ? 'text-blue
   <!-- Footer -->
   <footer class="bg-white border-t">
     <div class="container mx-auto px-4 py-4 text-center text-sm text-gray-500">
-      © <?= date('Y') ?> RS Emrest. Semua hak dilindungi.
+      © <?= date('Y') ?> Xmo. Semua hak dilindungi.
     </div>
   </footer>
 

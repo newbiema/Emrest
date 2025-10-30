@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Masuk | RS Emrest</title>
+  <title>Masuk | Xmo</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
@@ -113,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="mx-auto w-16 h-16 rounded-2xl bg-blue-600/10 flex items-center justify-center">
           <i class="fa-solid fa-hospital text-blue-600 text-2xl"></i>
         </div>
-        <h1 class="mt-3 text-2xl font-bold text-gray-800 brand">RS Emrest</h1>
+        <h1 class="mt-3 text-2xl font-bold text-gray-800 brand">Xmo</h1>
         <p class="muted text-sm">Sistem Informasi Rekam Medis</p>
       </div>
 
@@ -138,8 +138,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <option value="dokter" <?= $selectedRole==='dokter'?'selected':''; ?>>Dokter</option>
                 <option value="perawat"<?= $selectedRole==='perawat'?'selected':''; ?>>Perawat</option>
                 <option value="apotek" <?= $selectedRole==='apotek'?'selected':''; ?>>Apotek</option>
-                <option value="loket"  <?= $selectedRole==='loket'?'selected':''; ?>>Loket</option>
-                <option value="user"   <?= $selectedRole==='user'?'selected':''; ?>>Pasien</option>
               </select>
               <i class="fa-solid fa-chevron-down absolute right-3 top-3.5 text-gray-400 pointer-events-none"></i>
             </div>
@@ -188,7 +186,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
           <!-- Footer -->
           <div class="text-center mt-3">
-            <p class="muted text-xs">© <?= date('Y') ?> RS Emrest</p>
+            <p class="muted text-xs">© <?= date('Y') ?> Xmo</p>
           </div>
         </form>
       </div>
