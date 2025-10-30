@@ -2,10 +2,10 @@
 require_once __DIR__ . '/services/Auth.php';
 require_once __DIR__ . '/services/Alert.php';
 require_once __DIR__ . '/services/Helper.php';
-require_once __DIR__ . '/services/Database.php'; // ⬅️ tambahkan
+require_once __DIR__ . '/services/Database.php';
 
 $auth = new Auth();
-$db   = (new Database())->connect(); // ⬅️ koneksi untuk cek status akun
+$db   = (new Database())->connect();
 
 // Jika sudah login, langsung lempar ke halaman sesuai role
 if (!empty($_SESSION['logged_in'])) {
@@ -38,11 +38,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
   }
 
+  // (opsional) throttle sederhana untuk brute force
+  usleep(200000); // 200ms
+
   if ($auth->login($username, $password)) {
     $actual = strtolower($_SESSION['level'] ?? '');
 
     if ($expected !== '' && $expected !== $actual) {
-      // role mismatch: reset session manual (jangan panggil logout langsung)
+      // role mismatch: reset session manual (jangan panggil logout langsung agar tidak memicu redirect berantai)
       $_SESSION = [];
       if (ini_get('session.use_cookies')) {
         $p = session_get_cookie_params();
@@ -61,17 +64,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     unset($_SESSION['csrf_login']);
     $auth->redirectAfterLogin();
   } else {
-    // ⬇️ LOGIN GAGAL → cek apakah akun ada tapi belum verifikasi
+    // LOGIN GAGAL → cek apakah akun ada tapi belum verifikasi
     $norm = mb_strtolower($username);
-    $stmt = $db->prepare("SELECT level, verified FROM account WHERE username = ? LIMIT 1");
+    $stmt = $db->prepare("SELECT level, verified, email FROM account WHERE LOWER(username) = LOWER(?) LIMIT 1");
     $stmt->bind_param("s", $norm);
     $stmt->execute();
     $acc = $stmt->get_result()->fetch_assoc();
     $stmt->close();
 
     if ($acc && strtolower($acc['level']) === 'user' && (int)$acc['verified'] !== 1) {
-      // akun pasien ada tapi belum verifikasi
-      header('Location: ' . Helper::baseUrl('login.php?unverified=1'));
+      // arahkan ke alert 'cek email' + shortcut kirim ulang
+      $mail = urlencode($acc['email'] ?? '');
+      header('Location: ' . Helper::baseUrl('login.php?check_email=1&email=' . $mail));
       exit;
     }
 
@@ -235,5 +239,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       });
     <?php endif; ?>
   </script>
+
+  <script>
+  // Info: cek email untuk verifikasi
+  <?php if (!empty($_GET['check_email'])):
+    $em = htmlspecialchars($_GET['email'] ?? '');
+    $resendUrl = Helper::baseUrl('portal/resend_verification.php?email=' . urlencode($em));
+  ?>
+  Swal.fire({
+    icon: 'info',
+    title: 'Verifikasi dikirim',
+    html: `
+      Kami telah mengirim link verifikasi ke <b><?= $em ?></b>.<br/>
+      Silakan cek inbox atau folder spam, lalu klik tombol "Verifikasi".
+      <div class="mt-3 grid gap-2">
+        <a href="https://mail.google.com" target="_blank" class="swal2-confirm swal2-styled" style="background:#2563eb">Buka Gmail</a>
+        <a href="https://outlook.live.com/mail/0/inbox" target="_blank" class="swal2-styled" style="background:#0ea5e9">Buka Outlook</a>
+        <a href="https://mail.yahoo.com" target="_blank" class="swal2-styled" style="background:#8b5cf6">Buka Yahoo</a>
+        <a href="<?= $resendUrl ?>" class="swal2-styled" style="background:#10b981">Kirim Ulang Verifikasi</a>
+      </div>
+    `,
+    showConfirmButton: false,
+    showCloseButton: true,
+    width: 500
+  });
+  <?php endif; ?>
+  </script>
+
 </body>
 </html>

@@ -3,49 +3,40 @@ require_once __DIR__ . '/../services/Database.php';
 require_once __DIR__ . '/../services/Helper.php';
 require_once __DIR__ . '/../services/Alert.php';
 
+session_start();
 $db = (new Database())->connect();
 
 $token = $_GET['token'] ?? '';
-
-if (!$token || strlen($token) < 16) {
-  Alert::toast('error','Token verifikasi tidak valid.', Helper::baseUrl('login.php'));
+if ($token === '') {
+  Alert::toast('error', 'Token tidak ditemukan.', Helper::baseUrl('login.php'));
   exit;
 }
 
-$stmt = $db->prepare("SELECT id, verified, verify_expires FROM account WHERE verify_token = ? LIMIT 1");
-$stmt->bind_param("s", $token);
-$stmt->execute();
-$res = $stmt->get_result();
-$user = $res->fetch_assoc();
-$stmt->close();
+// Cari akun berdasarkan token & belum kadaluarsa
+$sql = "SELECT id, verified, verify_expires FROM account WHERE verify_token=? LIMIT 1";
+$st  = $db->prepare($sql);
+$st->bind_param('s', $token);
+$st->execute();
+$res = $st->get_result();
+$acc = $res->fetch_assoc();
 
-if (!$user) {
-  Alert::toast('error', 'Token verifikasi tidak ditemukan.', Helper::baseUrl('login.php'));
+if (!$acc) {
+  Alert::toast('error', 'Token verifikasi tidak valid.', Helper::baseUrl('login.php'));
+  exit;
+}
+if (strtotime($acc['verify_expires']) < time()) {
+  Alert::toast('warning', 'Link verifikasi kadaluarsa. Kirim ulang verifikasi.', Helper::baseUrl('portal/resend_verification.php'));
+  exit;
+}
+if ((int)$acc['verified'] === 1) {
+  Alert::toast('info', 'Akun sudah terverifikasi. Silakan login.', Helper::baseUrl('login.php'));
   exit;
 }
 
-if ((int)$user['verified'] === 1) {
-  // sudah terverifikasi
-  Alert::toast('info', 'Akun sudah terverifikasi. Silakan masuk.', Helper::baseUrl('login.php'));
-  exit;
-}
-
-// cek kedaluwarsa
-$now = new DateTimeImmutable('now');
-$exp = new DateTimeImmutable($user['verify_expires'] ?? '1970-01-01 00:00:00');
-if ($now > $exp) {
-  Alert::toast('warning','Token verifikasi sudah kedaluwarsa. Silakan kirim ulang verifikasi.', Helper::baseUrl('portal/resend_verification.php'));
-  exit;
-}
-
-// set verified
+// Update: verified=1 dan hapus token
 $upd = $db->prepare("UPDATE account SET verified=1, verify_token=NULL, verify_expires=NULL WHERE id=?");
-$upd->bind_param("i", $user['id']);
-$ok = $upd->execute();
-$upd->close();
+$upd->bind_param('i', $acc['id']);
+$upd->execute();
 
-if ($ok) {
-  Alert::toast('success','Verifikasi berhasil. Silakan masuk.', Helper::baseUrl('login.php'));
-} else {
-  Alert::toast('error','Gagal memverifikasi akun. Coba lagi.', Helper::baseUrl('portal/resend_verification.php'));
-}
+Alert::toast('success', 'Verifikasi berhasil! Silakan login.', Helper::baseUrl('login.php'));
+exit;

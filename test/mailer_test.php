@@ -7,5 +7,5 @@ $mailer = new Mailer([
   'smtp_debug' => 2, // lihat log SMTP di output
 ]);
 
-$ok = $mailer->sendVerification('email_tujuan@xevan19@gmail.com', 'Tester', bin2hex(random_bytes(8)));
+$ok = $mailer->sendVerification('xevan19@gmail.com', 'Tester', bin2hex(random_bytes(8)));
 echo $ok ? "SUKSES\n" : "GAGAL\n";
