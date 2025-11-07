@@ -5,7 +5,7 @@ require_once __DIR__ . '/../services/Alert.php';
 
 $auth = new Auth();
 $auth->checkLogin();
-$auth->authorize(['admin','apotek']);
+$auth->authorize(['admin','farmasi']);
 $db = (new Database())->connect();
 $pageTitle = "Tambah Obat";
 

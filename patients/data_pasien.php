@@ -6,7 +6,7 @@ require_once __DIR__ . '/../services/Helper.php';
 $auth = new Auth();
 $auth->checkLogin();
 // hak akses lihat pasien
-$auth->authorize(['admin','perawat','loket','dokter','apotek']);
+$auth->authorize(['admin','perawat','loket','dokter','farmasi']);
 
 $db = (new Database())->connect();
 

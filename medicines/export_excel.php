@@ -8,7 +8,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 $auth = new Auth();
 $auth->checkLogin();
-$auth->authorize(['admin','apotek']);
+$auth->authorize(['admin','farmasi']);
 $db = (new Database())->connect();
 $result = mysqli_query($db, "SELECT * FROM obat ORDER BY nama_obat ASC");
 

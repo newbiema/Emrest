@@ -5,7 +5,7 @@ require_once __DIR__ . '/../services/Helper.php';
 
 $auth = new Auth();
 $auth->checkLogin();
-$auth->authorize(['admin','apotek','dokter','perawat']);
+$auth->authorize(['admin','farmasi','dokter','perawat']);
 $db = (new Database())->connect();
 $pageTitle = "Data Obat";
 

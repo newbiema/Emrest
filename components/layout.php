@@ -47,8 +47,8 @@ $pageTitle = $pageTitle ?? 'Rekam Medis';
         <i class="fa-solid fa-gauge-high w-5"></i> Dashboard
       </a>
 
-      <!-- Data Pasien (admin, perawat, loket, dokter, apotek) -->
-      <?php if (in_array($role, ['admin','perawat','loket','dokter','apotek'])): ?>
+      <!-- Data Pasien (admin, perawat, loket, dokter, farmasi) -->
+      <?php if (in_array($role, ['admin','perawat','loket','dokter','farmasi'])): ?>
       <a href="<?= Helper::baseUrl('patients/data_pasien.php') ?>"
          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-700">
         <i class="fa-solid fa-users w-5"></i> Data Pasien
@@ -63,8 +63,8 @@ $pageTitle = $pageTitle ?? 'Rekam Medis';
       </a>
       <?php endif; ?>
 
-      <!-- Data Obat (admin, apotek) -->
-      <?php if (in_array($role, ['admin','apotek'])): ?>
+      <!-- Data Obat (admin, farmasi) -->
+      <?php if (in_array($role, ['admin','farmasi'])): ?>
       <a href="<?= Helper::baseUrl('medicines/data_obat.php') ?>"
          class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-700">
         <i class="fa-solid fa-capsules w-5"></i> Data Obat
@@ -144,7 +144,7 @@ $pageTitle = $pageTitle ?? 'Rekam Medis';
       'record.view','record.add',
       'patient.export',
     ],
-    apotek: [
+    farmasi: [
       'patient.view',
       'medicine.view','medicine.add','medicine.edit',
       'medicine.export',
